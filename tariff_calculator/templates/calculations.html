@@ -1,0 +1,141 @@
+{% extends 'base.html' %}
+
+{% block title %}Results{% endblock %}
+
+{% block content %}
+
+
+
+<div class="row">
+    <!-- <h2>Result:</h2> -->
+    <div class="col-sm-3 rows">
+        <div class="col-sm-6">
+            <label class="label">AWB:</label>
+            <label class="form-control">{{AWB|safe}}</label>
+        </div>
+
+        <div class="col-sm-6">
+            <label class="label">HAWB:</label>
+            <label class="form-control">{{HAWB|safe}}</label>
+        </div>
+
+    </div>
+
+
+    <div class="col-sm-3 rows">
+        <div class="col-sm-6">
+            <label class="label">Arrival Date:</label>
+            <label class="form-control">{{arrival_date|safe}}</label>
+        </div>
+    
+        <div class="col-sm-6">
+            <label class="label">Payment Date:</label>
+            <label class="form-control">{{payment_date|safe}}</label>
+        </div>
+    
+    </div>
+
+
+    <div class="col-sm-3 rows">
+        <div class="col-sm-6">
+            <label class="label">Cargo Category:</label>
+            <label class="form-control">{{category|safe}}</label>
+        </div>
+    
+        <div class="col-sm-6">
+            <label class="label">Cargo Class:</label>
+            <label class="form-control">{{cargo_class|safe}}</label>
+        </div>
+    
+    </div>
+
+
+    <div class="col-sm-3 rows">
+        <div class="col-sm-6">
+            <label class="label">Weight:</label>
+            <label class="form-control">{{weight|safe}}</label>
+        </div>
+    
+        <div class="col-sm-6">
+            <label class="label">Dwell Time:</label>
+            <label class="form-control">{{dwell_time|safe}}</label>
+        </div>
+    
+    </div>
+
+</div>
+
+<br><br>
+
+<!-- <style>
+    table, th, td {
+      border:1px solid darkgray;
+    }
+</style> -->
+
+    
+<!-- <h2>Results</h2> -->
+
+<!-- <table>
+    
+  <tr>
+    <td>DO Fee</th>
+    <td>{{do|safe}}</td>
+  </tr>
+  <tr>
+    <td>Handling Fee</th>
+    <td>{{handling|safe}}</td>
+  </tr>
+
+  <tr>
+    <td>Deconsole Fee</th>
+    <td>{{deconsole|safe}}</td>
+  </tr>
+  
+  <tr>
+    <td>Storage Fee</th>
+    <td>{{storage|safe}}</td>
+  </tr>
+  <tfoot>
+  <tr>
+    <th>Estimated Charge</th>
+    <td>{{total|safe}}</td>
+  </tr>
+</tfoot>
+    
+</table> -->
+
+
+<table class="table table-hover" style="width: 50%;">
+    <tbody>
+      <tr>
+        <td scope="row">DO Fee</th>
+        <td>{{do|safe}}</td>
+      </tr>
+      <tr>
+        <td scope="row">Deconsole Fee</th>
+        <td>{{deconsole|safe}}</td>
+      </tr>
+      <tr>
+        <td scope="row">Handling Fee</th>
+        <td>{{handling|safe}}</td>
+      </tr>
+      <tr>
+        <td scope="row">Storage Fee</th>
+        <td>{{storage|safe}}</td>
+      </tr>
+      <tfoot>
+        <th scope="row">Sum</th>
+        <th>{{total|safe}}</td>
+      </tfoot>
+    </tbody>
+</table>
+
+
+{% endblock %}
+
+
+
+
+
+

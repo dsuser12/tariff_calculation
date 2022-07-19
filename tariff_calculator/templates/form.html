@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block title %}Form{% endblock %}
+
+{% block content %}
+
+<form action="calculations" method="post" enctype="multipart/form-data" >
+    {% csrf_token %}
+    {{ form.as_p }}<br>
+    AWB: <input type="text" name="AWB"><br><br>
+    HAWB: <input type="text" name="HAWB"><br><br>
+    Arrival Date: <input type="date" name="arrival_date"><br><br>
+    Payment Date: <input type="date" name="payment_date"><br><br>
+    Cargo Category: <input type="text" name="category"><br><br>
+    Cargo Class: <input type="text" name="cargo_class"><br><br>
+    Weight: <input type="float" name="weight"><br><br>
+    <input type="submit" name="submit" value="Submit" id="submit">
+</form>
+
+{% endblock %}
