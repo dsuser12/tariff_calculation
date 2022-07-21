@@ -11,8 +11,8 @@ def index(request):
 
 def calculate_tariff(request):
 
-    AWB = request.POST["AWB"]
-    HAWB = request.POST["HAWB"]
+    # AWB = request.POST["AWB"]
+    # HAWB = request.POST["HAWB"]
     arrival_date = request.POST["arrival_date"]
     payment_date = request.POST["payment_date"]
     category = request.POST["category"]
@@ -20,16 +20,14 @@ def calculate_tariff(request):
     weight = request.POST["weight"]
 
     calculations_sql = '''
-     DECLARE @AWB nvarchar(255) 
-    DECLARE @HAWB nvarchar(255) 
+
     DECLARE @Arrival_Date date 
     DECLARE @Payment_Date date 
     DECLARE @Category nvarchar(50) 
     DECLARE @Cargo_Class nvarchar(50) 
     DECLARE @Weight float 
 
-    SET @AWB = '{}'
-    SET @HAWB = '{}'
+
     SET @Arrival_Date = '{}';
     SET @Payment_Date = '{}';
     SET @Category = '{}';
@@ -37,23 +35,21 @@ def calculate_tariff(request):
     SET @Weight = {};
 
     SELECT t.*
-    ,CASE WHEN HAWB IS NOT NULL THEN doc.Charges_D_Console ELSE 0 END AS [Deconsole Charges]
-    ,CASE WHEN HAWB IS NOT NULL THEN 0 ELSE doc.Charges_DO_Fee END AS [DO Fee]
+    ,doc.Charges_D_Console AS [Deconsole Charges]
+    ,0 AS [DO Fee]
     ,doc.Charges_Doc [Documentation Charges]
     ,CASE WHEN hd.Charges_Per = 'Per KG' THEN hd.Charges_PKR * Weight ELSE hd.Charges_PKR END AS [Handling]
     ,CASE WHEN gd.Charges_Per = 'Per Day' THEN (Dwell_Time - gd.Free_Days) * gd.Charges_PKR ELSE 
     (Dwell_Time - gd.Free_Days) * gd.Charges_PKR * Weight END as [Storage]
-    ,CEILING((CASE WHEN HAWB IS NOT NULL THEN doc.Charges_D_Console ELSE 0 END) + 
-     (CASE WHEN HAWB IS NOT NULL THEN 0 ELSE doc.Charges_DO_Fee END) + 
+    ,CEILING((doc.Charges_D_Console) + 
      (doc.Charges_Doc) +
      (CASE WHEN hd.Charges_Per = 'Per KG' THEN hd.Charges_PKR * Weight ELSE hd.Charges_PKR END) +
      (CASE WHEN gd.Charges_Per = 'Per Day' THEN (Dwell_Time - gd.Free_Days) * gd.Charges_PKR ELSE 
     (Dwell_Time - gd.Free_Days) * gd.Charges_PKR * Weight END)) Total
 
     FROM (
-    SELECT @AWB [AWB]
-    		,@HAWB [HAWB]
-    		,@Arrival_Date Arrival_Date
+    SELECT 
+    		 @Arrival_Date Arrival_Date
     		,@Payment_Date Payment_Date
     		,@Category Category
     		,@Cargo_Class Cargo_Class
@@ -87,9 +83,9 @@ def calculate_tariff(request):
 
     
     
-    '''.format(AWB, HAWB, arrival_date, payment_date, category, cargo_class, weight)
+    '''.format(arrival_date, payment_date, category, cargo_class, weight)
 
-    cnxn = server_access('CARGO')
+    cnxn = server_access()
     df = pd.read_sql(calculations_sql, cnxn)
     # dwell_time = round(df['Dwell_Time'].values[0],2)
     # deconsole = round(df['Deconsole Charges'].values[0],2)
@@ -100,15 +96,18 @@ def calculate_tariff(request):
     dwell_time = ceil(df['Dwell_Time'].values[0])
     deconsole = ceil(df['Deconsole Charges'].values[0])
     do = ceil(df['DO Fee'].values[0])
+    doc_charges = ceil(df['Documentation Charges'].values[0])
     handling = ceil(df['Handling'].values[0])
     storage = ceil(df['Storage'].values[0])
-    total = ceil(df['Total'].values[0])
+    total = deconsole + doc_charges + handling + storage
+    # total = ceil(df['Total'].values[0])
     dwell_time = f"{dwell_time:,}"
     deconsole = f"{deconsole:,}"
     do = f"{do:,}"
+    doc_charges = f"{doc_charges:,}"
     handling = f"{handling:,}"
     storage = f"{storage:,}"
     total = f"{total:,}"
-    return render(request, 'calculations.html', {'AWB':AWB, 'HAWB':HAWB, 'arrival_date':arrival_date, 
+    return render(request, 'calculations.html', {'arrival_date':arrival_date, 
     'payment_date':payment_date, 'category':category, 'cargo_class':cargo_class, 'weight':weight,
-    'dwell_time':dwell_time, 'deconsole':deconsole, 'do':do, 'handling':handling, 'storage':storage, 'total':total})
+    'dwell_time':dwell_time, 'deconsole':deconsole, 'doc_charges':doc_charges, 'handling':handling, 'storage':storage, 'total':total})

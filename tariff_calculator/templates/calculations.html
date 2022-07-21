@@ -5,10 +5,10 @@
 {% block content %}
 
 
-
+<h2> Only For HAWB Calculations </h2>
 <div class="row">
     <!-- <h2>Result:</h2> -->
-    <div class="col-sm-3 rows">
+    <!-- <div class="col-sm-3 rows">
         <div class="col-sm-6">
             <label class="label">AWB:</label>
             <label class="form-control">{{AWB|safe}}</label>
@@ -19,7 +19,7 @@
             <label class="form-control">{{HAWB|safe}}</label>
         </div>
 
-    </div>
+    </div> -->
 
 
     <div class="col-sm-3 rows">
@@ -58,7 +58,7 @@
     
         <div class="col-sm-6">
             <label class="label">Dwell Time:</label>
-            <label class="form-control">{{dwell_time|safe}}</label>
+            <label class="form-control">{{dwell_time|safe}} Days</label>
         </div>
     
     </div>
@@ -109,8 +109,8 @@
 <table class="table table-hover" style="width: 50%;">
     <tbody>
       <tr>
-        <td scope="row">DO Fee</th>
-        <td>{{do|safe}}</td>
+        <td scope="row">Documentation Fee</th>
+        <td>{{doc_charges|safe}}</td>
       </tr>
       <tr>
         <td scope="row">Deconsole Fee</th>
