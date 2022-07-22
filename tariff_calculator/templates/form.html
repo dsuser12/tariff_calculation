@@ -4,6 +4,56 @@
 
 {% block content %}
 
+<script>
+    var catObject = {
+      "AFU": {
+        "GEN":[],
+        "15 to 25 Degree Celsius":[],
+        "2 to 8 Degree Celsius":[],  
+        "Freezer":[],
+        "DGR":[],
+        "VALUE":[],
+        "VUN":[],
+        "IDT":[] 
+      },
+      "ICG": {
+        "GEN":[],
+        "15 to 25 Degree Celsius":[],
+        "2 to 8 Degree Celsius":[],  
+        "Freezer":[],
+        "COU":[],
+        "BTL":[],
+        "DGR":[],
+        "RAD":[],
+        "VALUE":[],
+        "VUN":[],
+        "IDT":[] 
+      },
+      "PHARMA": {
+        "GEN":[],
+        "15 to 25 Degree Celsius":[],
+        "2 to 8 Degree Celsius":[],  
+        "Freezer":[],
+        "DGR":[]
+      }
+      
+    }
+    window.onload = function() {
+      var catSel = document.getElementById("category");
+      var classSel = document.getElementById("cargo_class");
+      for (var x in catObject) {
+        catSel.options[catSel.options.length] = new Option(x, x);
+      }
+      catSel.onchange = function() {
+
+        classSel.length = 1;
+        for (var y in catObject[this.value]) {
+            classSel.options[classSel.options.length] = new Option(y, y);
+        }
+      }
+    }
+    </script>
+
 <form action="calculations" method="post" enctype="multipart/form-data" >
     {% csrf_token %}
     {{ form.as_p }}<br>
@@ -25,10 +75,10 @@
             <div class="form-group col-md-6">
                 <label for="category">Cargo Category:</label>
                 <select class="form-control" id="category" name="category" required >
-                    <option value="">Select Category</option>
-                    <option value="AFU">AFU</option>
+                    <option value="" selected="selected">Select Category</option>
+                    <!-- <option value="AFU">AFU</option>
                     <option value="ICG">ICG</option>
-                    <option value="PHARMA">PHARMA</option>
+                    <option value="PHARMA">PHARMA</option> -->
                   </select>
 
             </div>
@@ -69,3 +119,5 @@
 </form>
 
 {% endblock %}
+
+
