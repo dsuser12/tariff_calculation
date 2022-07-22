@@ -9,12 +9,63 @@
     {{ form.as_p }}<br>
     <!-- AWB: <input type="text" name="AWB"><br><br>
     HAWB: <input type="text" name="HAWB"><br><br> -->
-    Arrival Date: <input type="date" name="arrival_date"><br><br>
-    Payment Date: <input type="date" name="payment_date"><br><br>
-    Cargo Category: <input type="text" name="category"><br><br>
-    Cargo Class: <input type="text" name="cargo_class"><br><br>
-    Weight (Kg): <input type="float" name="weight"><br><br>
-    <input type="submit" name="submit" value="Submit" id="submit">
+        <div class="row">    
+            <div class="form-group col-md-6">
+                <label for="inputEmail4">Arrival Date:</label>
+                <input type="date" class="form-control" id="arrival_date" name="arrival_date" required>
+            </div>
+
+            <div class="form-group col-md-6">
+                <label for="payment_date">Payment Date:</label>
+                <input type="date" class="form-control" id="payment_date" name="payment_date" required>
+            </div>
+        </div> <br>
+
+        <div class="row">    
+            <div class="form-group col-md-6">
+                <label for="category">Cargo Category:</label>
+                <select class="form-control" id="category" name="category" required >
+                    <option value="">Select Category</option>
+                    <option value="AFU">AFU</option>
+                    <option value="ICG">ICG</option>
+                    <option value="PHARMA">PHARMA</option>
+                  </select>
+
+            </div>
+
+            <div class="form-group col-md-6">
+                <label for="cargo_class">Cargo Class:</label>
+                <select class="form-control" id="cargo_class" name="cargo_class" required >
+                    <option value="">Select Class</option>
+                    <option value="GEN">GEN</option>
+                    <option value="15 to 25 Degree Celsius">15 to 25 Degree Celsius</option>
+                    <option value="2 to 8 Degree Celsius">2 to 8 Degree Celsius</option>
+                    <option value="Freezer">Freezer</option>
+                    <option value="DGR">DGR</option>
+                    <option value="RAD">RAD</option>
+                    <option value="Value">Value</option>
+                    <option value="VUN">VUN</option>
+                    <option value="BTL">BTL</option>
+                    <option value="COU">COU</option>
+                    <option value="IDT">IDT</option>
+                  </select>
+
+            </div>
+
+        </div>   <br> 
+
+        <div class="row">    
+            <div class="form-group col-md-6">
+                <label for="weight">Weight (Kg):</label>
+                <input type="float" class="form-control" id="weight" name="weight"  required>
+            </div>
+        </div> <br>
+
+
+        <div class="form-group col-md-12" style="text-align:center;">
+            <input type="submit" name="submit" value="Calculate" id="submit" class="btn btn-primary" style="background-color:#0088ce;">
+        </div>
+
 </form>
 
 {% endblock %}

@@ -7,13 +7,36 @@
     <link rel='stylesheet' href="{% static 'css/bootstrap.min.css'%}", type="text/css" />
     <link rel='stylesheet' href="{% static 'css/table_style.css'%}", type="text/css" />
 
+    <style>
+        .c-navigation {
+            font-family: fsjoey,tahoma,sans-serif;
+            text-align: center;
+            background: #0088ce;
+        }
+    </style>
 </head>
-<body>
-    <div class="navbar navbar-fixed-top" style="border-bottom: solid; border-color:darkgray;background-color: darkgray;"></div>
+<body> 
+    
+     <div>
+         <a class="navbar-brand" href="/">
+            <img src="/static/image/GDLOGO.png" height="30" width="75" style="margin-left : 30px ;margin-top: 30px ;" />
+        </a>
+     </div>
+    
+    <div style="padding-top: 30px ;">
+        <nav id="main-navigation" class="c-navigation" style="height:47px">
+            <div class="container">
+            </div>
+        </nav>
+    </div>
+
+
     <br>
-    <div class="container">
-        {% block content %} 
-        {% endblock %}
+    <div>
+        <div class="container" >
+            {% block content %} 
+            {% endblock %}
+        </div>
     </div>
 </body>
 

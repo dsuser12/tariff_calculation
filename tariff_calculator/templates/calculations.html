@@ -5,8 +5,9 @@
 {% block content %}
 
 
-<h2> Only For HAWB Calculations </h2>
-<div class="row">
+<h4 style="text-align: center;"> Calculation </h4>
+<hr>
+  <div class="row">
     <!-- <h2>Result:</h2> -->
     <!-- <div class="col-sm-3 rows">
         <div class="col-sm-6">
@@ -22,7 +23,7 @@
     </div> -->
 
 
-    <div class="col-sm-3 rows">
+    <div class="row">
         <div class="col-sm-6">
             <label class="label">Arrival Date:</label>
             <label class="form-control">{{arrival_date|safe}}</label>
@@ -36,7 +37,7 @@
     </div>
 
 
-    <div class="col-sm-3 rows">
+    <div class="row">
         <div class="col-sm-6">
             <label class="label">Cargo Category:</label>
             <label class="form-control">{{category|safe}}</label>
@@ -50,7 +51,7 @@
     </div>
 
 
-    <div class="col-sm-3 rows">
+    <div class="row">
         <div class="col-sm-6">
             <label class="label">Weight:</label>
             <label class="form-control">{{weight|safe}}</label>
@@ -105,31 +106,39 @@
     
 </table> -->
 
+  <div style="text-align:-webkit-center">
+    <table class="table table-hover table-striped" style="width: 50%;">
+        <tbody>
+          <tr>
+            <td scope="row">Documentation Fee</th>
+            <td>{{doc_charges|safe}}</td>
+          </tr>
+          <tr>
+            <td scope="row">Deconsole Fee</th>
+            <td>{{deconsole|safe}}</td>
+          </tr>
+          <tr>
+            <td scope="row">Handling Fee</th>
+            <td>{{handling|safe}}</td>
+          </tr>
+          <tr>
+            <td scope="row">Storage Fee</th>
+            <td>{{storage|safe}}</td>
+          </tr>
+          <tfoot class="table-primary">
+            <th scope="row">Sum</th>
+            <th>{{total|safe}}</td>
+          </tfoot>
+        </tbody>
+    </table>
+    <span> Only For HAWB Calculations </span><br>
+    <span>
+      <a class="navbar-brand" href="/">
+        Back to Home
+      </a>
+    </span>
+  </div>
 
-<table class="table table-hover" style="width: 50%;">
-    <tbody>
-      <tr>
-        <td scope="row">Documentation Fee</th>
-        <td>{{doc_charges|safe}}</td>
-      </tr>
-      <tr>
-        <td scope="row">Deconsole Fee</th>
-        <td>{{deconsole|safe}}</td>
-      </tr>
-      <tr>
-        <td scope="row">Handling Fee</th>
-        <td>{{handling|safe}}</td>
-      </tr>
-      <tr>
-        <td scope="row">Storage Fee</th>
-        <td>{{storage|safe}}</td>
-      </tr>
-      <tfoot>
-        <th scope="row">Sum</th>
-        <th>{{total|safe}}</td>
-      </tfoot>
-    </tbody>
-</table>
 
 
 {% endblock %}

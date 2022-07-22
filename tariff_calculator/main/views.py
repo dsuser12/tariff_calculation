@@ -85,7 +85,7 @@ def calculate_tariff(request):
     
     '''.format(arrival_date, payment_date, category, cargo_class, weight)
 
-    cnxn = server_access()
+    cnxn = server_access('CARGO')
     df = pd.read_sql(calculations_sql, cnxn)
     # dwell_time = round(df['Dwell_Time'].values[0],2)
     # deconsole = round(df['Deconsole Charges'].values[0],2)
