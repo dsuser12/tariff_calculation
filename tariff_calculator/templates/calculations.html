@@ -24,45 +24,40 @@
 
 
     <div class="row">
-        <div class="col-sm-6">
+        <div class="col-sm-3">
             <label class="label">Arrival Date:</label>
             <label class="form-control">{{arrival_date|safe}}</label>
         </div>
     
-        <div class="col-sm-6">
+        <div class="col-sm-3">
             <label class="label">Payment Date:</label>
             <label class="form-control">{{payment_date|safe}}</label>
         </div>
-    
+
+        <div class="col-sm-2">
+          <label class="label">Category:</label>
+          <label class="form-control">{{category|safe}}</label>
+      </div>
+  
+      <div class="col-sm-2">
+          <label class="label">Class:</label>
+          <label class="form-control">{{cargo_class|safe}}</label>
+      </div>
+      <div class="col-sm-2">
+        <label class="label">Weight:</label>
+        <label class="form-control">{{weight|safe}}</label>
+      </div>
     </div>
 
-
-    <div class="row">
-        <div class="col-sm-6">
-            <label class="label">Cargo Category:</label>
-            <label class="form-control">{{category|safe}}</label>
-        </div>
-    
-        <div class="col-sm-6">
-            <label class="label">Cargo Class:</label>
-            <label class="form-control">{{cargo_class|safe}}</label>
-        </div>
-    
-    </div>
-
-
-    <div class="row">
-        <div class="col-sm-6">
-            <label class="label">Weight:</label>
-            <label class="form-control">{{weight|safe}}</label>
-        </div>
+    <!-- <div class="row">
+        
     
         <div class="col-sm-6">
             <label class="label">Dwell Time:</label>
             <label class="form-control">{{dwell_time|safe}} Days</label>
         </div>
     
-    </div>
+    </div> -->
 
 </div>
 
@@ -135,6 +130,7 @@
           </tfoot>
         </tbody>
     </table>
+    <hr>
     <span> Only For HAWB Calculations </span><br>
     <span> Oversize Charges are not included </span><br>
     <span> Estimates are subject to change to the prices in effect at the time of delivery</span><br>
