@@ -18,6 +18,7 @@ def calculate_tariff(request):
     category = request.POST["category"]
     cargo_class = request.POST["cargo_class"]
     weight = request.POST["weight"]
+    station = request.POST["Station"]
 
     calculations_sql = '''
 
@@ -26,6 +27,7 @@ def calculate_tariff(request):
     DECLARE @Category nvarchar(50) 
     DECLARE @Cargo_Class nvarchar(50) 
     DECLARE @Weight float 
+    DECLARE @Station nvarchar(50)
 
 
     SET @Arrival_Date = '{}';
@@ -33,19 +35,22 @@ def calculate_tariff(request):
     SET @Category = '{}';
     SET @Cargo_Class = '{}';
     SET @Weight = {};
+    SET @Station = '{}'
 
     SELECT t.*
-    ,doc.Charges_D_Console AS [Deconsole Charges]
+    ,tax.Tax_Rate
+	,ISNULL(ov.Charges_PKR,0) Oversized_Charges 
+    ,ISNULL(doc.Charges_D_Console,0) AS [Deconsole Charges]
     ,0 AS [DO Fee]
-    ,doc.Charges_Doc [Documentation Charges]
-    ,CASE WHEN hd.Charges_Per = 'Per KG' THEN hd.Charges_PKR * Weight ELSE hd.Charges_PKR END AS [Handling]
-    ,CASE WHEN gd.Charges_Per = 'Per Day' THEN (Dwell_Time - gd.Free_Days) * gd.Charges_PKR ELSE 
-    (Dwell_Time - gd.Free_Days) * gd.Charges_PKR * Weight END as [Storage]
-    ,CEILING((doc.Charges_D_Console) + 
-     (doc.Charges_Doc) +
-     (CASE WHEN hd.Charges_Per = 'Per KG' THEN hd.Charges_PKR * Weight ELSE hd.Charges_PKR END) +
-     (CASE WHEN gd.Charges_Per = 'Per Day' THEN (Dwell_Time - gd.Free_Days) * gd.Charges_PKR ELSE 
-    (Dwell_Time - gd.Free_Days) * gd.Charges_PKR * Weight END)) Total
+    ,ISNULL(doc.Charges_Doc,0) [Documentation Charges]
+    ,ISNULL(CASE WHEN hd.Charges_Per = 'Per KG' THEN hd.Charges_PKR * Weight ELSE hd.Charges_PKR END,0) AS [Handling]
+    ,ISNULL(CASE WHEN gd.Charges_Per = 'Per Day' THEN (Dwell_Time - FLOOR(gd.Free_Days)) * gd.Charges_PKR ELSE 
+    (Dwell_Time - FLOOR(gd.Free_Days)) * gd.Charges_PKR * Weight END,0) as [Storage]
+    ,CEILING((ISNULL(doc.Charges_D_Console,0)) + 
+     (ISNULL(doc.Charges_Doc,0)) +
+     (ISNULL(CASE WHEN hd.Charges_Per = 'Per KG' THEN hd.Charges_PKR * Weight ELSE hd.Charges_PKR END,0)) +
+     (ISNULL(CASE WHEN gd.Charges_Per = 'Per Day' THEN (Dwell_Time - FLOOR(gd.Free_Days)) * gd.Charges_PKR ELSE 
+    (Dwell_Time - FLOOR(gd.Free_Days)) * gd.Charges_PKR * Weight END,0)) + ISNULL(ov.Charges_PKR,0)) Total
 
     FROM (
     SELECT 
@@ -54,13 +59,14 @@ def calculate_tariff(request):
     		,@Category Category
     		,@Cargo_Class Cargo_Class
     		,@Weight [Weight]
+            ,@Station [Station]
     		,DATEDIFF(day, @Arrival_Date, @Payment_Date) + 1 [Dwell_Time]
     		) t
     		LEFT JOIN [dbo].[Tariff_Handling] hd
     		ON  hd.Cargo_Class = t.Cargo_Class
     		AND hd.Category = t.Category 
-    		AND ROUND(t.Weight,2) >= hd.Wt_Min
-    		AND ROUND(t.Weight,2) <= hd.Wt_Max
+    		AND ROUND(t.Weight,0) >= hd.Wt_Min
+    		AND ROUND(t.Weight,0) <= hd.Wt_Max
     		AND CONVERT(DATE, Payment_Date) >= hd.Effective_Date
     		AND CONVERT(DATE, Payment_Date) <= hd.[Expiry_Date]
 
@@ -68,8 +74,8 @@ def calculate_tariff(request):
     		LEFT JOIN [dbo].[Tariff_Godown] gd ON
     		gd.Cargo_Class = t.Cargo_Class
     		AND gd.Category = t.Category
-    		AND ROUND(t.Weight ,2) >= gd.Wt_Min
-    		AND ROUND(t.Weight ,2) <= gd.Wt_Max
+    		AND ROUND(t.Weight ,0) >= gd.Wt_Min
+    		AND ROUND(t.Weight ,0) <= gd.Wt_Max
     		AND ROUND(t.Dwell_Time,2) >= gd.Dwell_Min
     		AND ROUND(t.Dwell_Time,2) <= gd.Dwell_Max
     		AND CONVERT(DATE, Payment_Date) >= gd.Effective_Date
@@ -81,11 +87,23 @@ def calculate_tariff(request):
     		AND CONVERT(DATE, Payment_Date) >= doc.Effective_Date
     		AND CONVERT(DATE, Payment_Date) <= doc.[Expiry_Date]
 
-    
-    
-    '''.format(arrival_date, payment_date, category, cargo_class, weight)
+            LEFT JOIN [dbo].Tariff_Oversized ov ON
+    		ov.Category = t.Category
+    		AND CONVERT(DATE, Payment_Date) >= ov.Effective_Date
+    		AND CONVERT(DATE, Payment_Date) <= ov.[Expiry_Date]
+			AND ROUND(t.Weight ,0) >= ov.Wt_Min
+    		AND ROUND(t.Weight ,0) <= ov.Wt_Max
 
-    cnxn = server_access('CARGO')
+            LEFT JOIN [dbo].[Tariff_Tax] tax ON
+    		tax.Station = t.Station
+    		AND CONVERT(DATE, Payment_Date) >= tax.Effective_Date
+    		AND CONVERT(DATE, Payment_Date) <= tax.[Expiry_Date]
+
+    
+    
+    '''.format(arrival_date, payment_date, category, cargo_class, weight, station)
+
+    cnxn = server_access()
     df = pd.read_sql(calculations_sql, cnxn)
     # dwell_time = round(df['Dwell_Time'].values[0],2)
     # deconsole = round(df['Deconsole Charges'].values[0],2)
@@ -99,15 +117,22 @@ def calculate_tariff(request):
     doc_charges = ceil(df['Documentation Charges'].values[0])
     handling = ceil(df['Handling'].values[0])
     storage = ceil(df['Storage'].values[0])
-    total = deconsole + doc_charges + handling + storage
+    # oversize = ceil(df['Oversized_Charges'].values[0])
+    tax_rate = (df['Tax_Rate'].values[0])/100
+    total = deconsole + doc_charges + handling + storage # oversize
     # total = ceil(df['Total'].values[0])
+    tax = round(tax_rate * total)
+    grand_total = total + tax
     dwell_time = f"{dwell_time:,}"
     deconsole = f"{deconsole:,}"
     do = f"{do:,}"
     doc_charges = f"{doc_charges:,}"
     handling = f"{handling:,}"
     storage = f"{storage:,}"
-    total = f"{total:,}"
+    # oversize = f"{oversize:,}"
+    tax = f"{tax:,}"
+    total = f"{grand_total:,}"
     return render(request, 'calculations.html', {'arrival_date':arrival_date, 
     'payment_date':payment_date, 'category':category, 'cargo_class':cargo_class, 'weight':weight,
-    'dwell_time':dwell_time, 'deconsole':deconsole, 'doc_charges':doc_charges, 'handling':handling, 'storage':storage, 'total':total})
+    'dwell_time':dwell_time, 'deconsole':deconsole, 'doc_charges':doc_charges, 'handling':handling, 
+    'storage':storage, 'tax':tax, 'total':total})

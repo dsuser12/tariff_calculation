@@ -1,6 +1,7 @@
 import pyodbc 
 
-def server_access(database):
+def server_access():
+    database = 'CARGO'
     server = '10.10.10.80,9003'  
     username = 'dataservice' 
     password = 'dsDnata123$' 
