@@ -9,6 +9,38 @@ from math import ceil
 def index(request):
     return render(request, 'form.html')
 
+def cargo_class_parser(cargo_class):
+    # For ICG
+    if cargo_class == 'IDT (DR)':
+        cargo_class = 'IDT'
+
+    elif cargo_class == 'RAD (RAM)':
+        cargo_class = 'RAD'
+
+    elif cargo_class == 'DGR/AVI':
+        cargo_class = 'DGR'
+
+    # For Pharma
+    elif cargo_class == 'GEN (PIL)':
+        cargo_class = 'GEN'
+
+    elif cargo_class == 'DGR (PDG)':
+        cargo_class = 'DGR'
+
+    elif cargo_class == '15 to 25 Degree Celsius (IRT)' or cargo_class == '15 to 25 Degree Celsius (PRT)' or cargo_class == '15 to 25 Degree Celsius (CRT)':
+        cargo_class = '15 to 25 Degree Celsius'
+
+    elif cargo_class == '2 to 8 Degree Celsius (ICO)' or cargo_class == '2 to 8 Degree Celsius (COL)' or cargo_class == '2 to 8 Degree Celsius (PIC)':
+        cargo_class = '2 to 8 Degree Celsius'
+
+    elif cargo_class == 'Freezer (IRO)' or cargo_class == 'Freezer (PRF)' or cargo_class == 'Freezer (FRO)':
+        cargo_class = 'Freezer'
+
+    else:
+        cargo_class = cargo_class
+
+    return cargo_class
+
 def calculate_tariff(request):
 
     # AWB = request.POST["AWB"]
@@ -16,9 +48,14 @@ def calculate_tariff(request):
     arrival_date = request.POST["arrival_date"]
     payment_date = request.POST["payment_date"]
     category = request.POST["category"]
-    cargo_class = request.POST["cargo_class"]
+    actual_cargo_class = request.POST["cargo_class"]
+    # print(cargo_class)
     weight = request.POST["weight"]
     station = request.POST["Station"]
+
+    # parse cargo class
+    cargo_class = cargo_class_parser(actual_cargo_class)
+    # print(cargo_class)
 
     calculations_sql = '''
 
